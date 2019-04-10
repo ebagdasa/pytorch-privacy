@@ -1,6 +1,6 @@
 test_batch_size: 100
 batch_size: 256
-num_microbatches: 32
+num_microbatches: 256
 lr: 0.15
 momentum: 0.5
 decay: 0
