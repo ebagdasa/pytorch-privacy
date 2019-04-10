@@ -1,37 +1,28 @@
 import json
 from datetime import datetime
 import argparse
-
 import torch
 from tensorboardX import SummaryWriter
-
 from helper import Helper
 from models.simple import Net
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm as tqdm
 import yaml
+import logging
 
-
+logger = logging.getLogger("logger")
 writer = SummaryWriter()
 layout = {'accuracy_per_class': {
     'accuracy_per_class': ['Multiline', ['accuracy_per_class/accuracy_var',
                                          'accuracy_per_class/accuracy_min',
                                          'accuracy_per_class/accuracy_max']]}}
 writer.add_custom_scalars(layout)
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-import logging
-
-logger = logging.getLogger("logger")
-
-
 
 
 def plot(x, y, name):
     writer.add_scalar(tag=name, scalar_value=y, global_step=x)
-
 
 
 def compute_norm(model, norm_type=2):
@@ -185,12 +176,6 @@ if __name__ == '__main__':
     else:
         criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=lr, momentum=momentum, weight_decay=decay)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
-                                                     milestones=[0.5 * epochs,
-                                                                 0.75 * epochs],
-                                                     gamma=0.1)
-
-
     writer.add_text('Model Params', json.dumps(helper.params))
     name = "accuracy"
 
@@ -200,7 +185,6 @@ if __name__ == '__main__':
             train_dp(helper.train_loader, net, optimizer, epoch)
         else:
             train(helper.train_loader, net, optimizer, epoch)
-        scheduler.step()
         acc = test(net, epoch, name, helper.test_loader, vis=True)
         acc_list = list()
 
