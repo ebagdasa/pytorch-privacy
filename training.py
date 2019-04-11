@@ -4,7 +4,7 @@ import argparse
 import torch
 from tensorboardX import SummaryWriter
 from helper import Helper
-from models.simple import Net
+from models.simple import Net, NetTF
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm as tqdm
@@ -90,7 +90,7 @@ def train_dp(trainloader, model, optimizer, epoch):
             model.zero_grad()
 
         for tensor_name, tensor in model.named_parameters():
-            if device =='cuda':
+            if device.type =='cuda':
                 noise = torch.cuda.FloatTensor(tensor.grad.shape).normal_(0, sigma)
             else:
                 noise = torch.FloatTensor(tensor.grad.shape).normal_(0, sigma)
@@ -142,6 +142,8 @@ def train(trainloader, model, optimizer, epoch):
             plot(epoch * len(trainloader) + i, running_loss, 'Train Loss')
             running_loss = 0.0
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PPDL')
@@ -168,7 +170,11 @@ if __name__ == '__main__':
     logger.info(momentum)
     helper.load_data()
     helper.create_loaders()
-    net = Net()
+    if helper.params['useTF']:
+        net = NetTF()
+    else:
+        net = Net()
+    print(count_parameters(net))
     net.to(device)
 
     if dp:
@@ -176,6 +182,10 @@ if __name__ == '__main__':
     else:
         criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=lr, momentum=momentum, weight_decay=decay)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
+                                                     milestones=[0.5 * epochs,
+                                                                 0.75 * epochs],
+                                                     gamma=0.1)
     writer.add_text('Model Params', json.dumps(helper.params))
     name = "accuracy"
 
@@ -185,6 +195,8 @@ if __name__ == '__main__':
             train_dp(helper.train_loader, net, optimizer, epoch)
         else:
             train(helper.train_loader, net, optimizer, epoch)
+        if helper.params.get('scheduler', False):
+            scheduler.step()
         acc = test(net, epoch, name, helper.test_loader, vis=True)
         acc_list = list()
 
