@@ -189,7 +189,6 @@ if __name__ == '__main__':
     writer.add_text('Model Params', json.dumps(helper.params))
     name = "accuracy"
 
-    acc = test(net, 0, name, helper.test_loader, vis=True)
     for epoch in range(1, epochs):  # loop over the dataset multiple times
         if dp:
             train_dp(helper.train_loader, net, optimizer, epoch)
