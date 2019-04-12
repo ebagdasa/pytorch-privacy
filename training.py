@@ -24,6 +24,12 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 def plot(x, y, name):
     writer.add_scalar(tag=name, scalar_value=y, global_step=x)
 
+def create_table(params: dict):
+    header = f"| {' | '.join([x[:10] for x in params.keys()])} |"
+    line = f"|{'|:'.join([3*'-' for x in range(len(params.keys()))])}|"
+    values = f"| {' | '.join([str(x) for x in params.values()])} |"
+    return '\n'.join([header, line, values])
+
 
 def compute_norm(model, norm_type=2):
     total_norm = 0
@@ -186,7 +192,8 @@ if __name__ == '__main__':
                                                      milestones=[0.5 * epochs,
                                                                  0.75 * epochs],
                                                      gamma=0.1)
-    writer.add_text('Model Params', json.dumps(helper.params))
+    table = create_table(helper.params)
+    writer.add_text('Model Params', table)
     name = "accuracy"
 
     for epoch in range(1, epochs):  # loop over the dataset multiple times
