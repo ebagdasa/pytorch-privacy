@@ -12,7 +12,7 @@ To run it configure `params.yaml` and install libs: `pip install requirements.tx
 python training.yaml --params utils/params.yaml
 ``` 
 
-The current result is 96.6% using noise multiplier 1.1 and S=1.
+The current result is 97.5% using noise multiplier 1.1 and S=1.
 
 To count the epsilon value using RDP just use this code from the original repo: [https://github.com/tensorflow/privacy/blob/master/privacy/analysis/compute_dp_sgd_privacy.py](https://github.com/tensorflow/privacy/blob/master/privacy/analysis/compute_dp_sgd_privacy.py).
 
