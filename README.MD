@@ -9,7 +9,7 @@ that the original repo doesn't have. However, I am actively working on this code
 To run it configure `params.yaml` and install libs: `pip install requirements.txt` and execute:
 
 ```bash
-python training.yaml --params utils/params.yaml
+python training.py --params utils/params.yaml
 ``` 
 
 The current result is 97.5% using noise multiplier 1.1 and S=1.
