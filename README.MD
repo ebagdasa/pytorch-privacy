@@ -3,7 +3,7 @@
 I used code from [tf-privacy](https://github.com/tensorflow/privacy) and the paper
 [A General Approach to Adding Differential Privacy to Iterative Training Procedures](https://arxiv.org/abs/1812.06210).
 
-This repo seems to be working fine, so try it yorself :). There are two train commands: `train` for traditional training and `train_dp` for DP. You can see that `train_dp` has added clipping and noise to each computed gradient (gradients are not averaged over the batch at first).
+This is a very basic implementation necessary for the quick start. There are two train commands: `train` for traditional training and `train_dp` for DP. You can see that `train_dp` has added clipping and noise to each computed gradient (gradients are not averaged over the batch at first).
 
 To run it configure `params.yaml` and install libs: `pip install requirements.txt` and execute:
 
